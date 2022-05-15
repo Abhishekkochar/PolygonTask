@@ -1,17 +1,16 @@
 There are two primary contracts ERC721Standard.sol & ERC721Permit.sol in contracts/Contract directory.
 
-ERC721Standard.sol is the base contract on the new implementation for efficient gas fees upon minting. Instead of using the default function provided by ERC721 for minting with passing arguments of address to and tokenId, this contract will use the length of the array called __owners__ (previously it was mapping). Essentially, when calling the mint function in contract MockNft. 
+ERC721Standard.sol is the base contract on the new implementation for efficient gas fees upon minting. Instead of using the default function provided by ERC721 for minting with passing arguments of address to and tokenId, this contract will use the length of the array called __owners__ (previously mapping). Essentially, when calling the mint function in contract MockNft. 
 
 The idea behind this is to avoid storing the same data at two different places, in this scenario, tokenid to address mapping, instead, we use the array. For every mint, tokenId will increment (++tokenid). This also provides flexibility in terms of totalSupply. As the token id will always be same as array.length, which can also be implemented to get the total supply.   
 
-We can have multiple NFT contracts derived from the base contract to use its functionalities.
 
 ERC721Permit.sol allows us to approve and transfer in the same Transaction thus saving more gas in the future while being one step close to needing ether to interact with EVM chains. The permit is sort of divided into two hashes, first one being DOMAIN_SEPARATOR: primarily being based on the contract's name, version, chainId & address. This First is also very much needed to complete the second part of the hash. Which consists of the first part and spender info such as an address, tokenId, nonce and time. Once the given time has passed (in tests it is set to 7 days) permits get void, and a re-issue will be needed. 
 
 MockNft.sol has a bit more complexity, a User can only buy a nft via Mockdai. The price is set to be 1 dai. Owner will have to set the sale status true for minting. This function can only be called by the owner. As this contract derives functions from both ERC721Standard and ERC721Permit, allowing us to use safeTransferFromWithPermit function which will call the permit function in ERC721Permit. 
 
 
-Multiple different NFTs can be created via importing these two contracts as bases for easy access to gas efficiency and permit. 
+Multiple different NFTs can be created via importing these two contracts as bases for easy access to gas efficiency (1.00000005 Gwei on Ropsten) and permit. 
 
 Ropsten Deployment address:
 
